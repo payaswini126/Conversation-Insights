@@ -1,0 +1,27 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: conversation-insights-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - DEBUG=false
+      - DATABASE_PATH=/app/data/conversation_insights.db
+      - INGEST_API_KEY=dev-ingest-key-change-me
+      - RATE_LIMIT_DEFAULT=100/minute
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: conversation-insights-ui
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
